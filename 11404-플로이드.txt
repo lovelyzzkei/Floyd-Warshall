@@ -1,0 +1,60 @@
+#include<iostream>
+using namespace std;
+
+int INF = 1000000000;
+int bus[110][110];
+void floydWarshall(int n);
+
+int main() {
+	cin.tie(NULL);
+	ios::sync_with_stdio(false);
+
+	// 도시의 개수와 버스의 개수를 받음
+	int n, m;
+	cin >> n >> m;
+
+	// 결과 그래프를 초기화
+	for (int i = 1; i <= n; i++) {
+		for (int j = 1; j <= n; j++) {
+			bus[i][j] = INF;
+		}
+	}
+	// 버스의 정보를 받음, 현재 비용이 작을때만 갱신
+	int a, b, c;
+	for (int i = 0; i < m; i++) {
+		cin >> a >> b >> c;
+		if (c < bus[a][b]) {
+			bus[a][b] = c;
+		}
+	}
+
+	// 플로이드 와샬 알고리즘을 수행
+	floydWarshall(n);
+	return 0;
+}
+
+void floydWarshall(int n) {
+	// 거쳐가는 정점을 기준으로 최소 비용 갱신
+	for (int k = 1; k <= n; k++) {
+		for (int i = 1; i <= n; i++) {
+			for (int j = 1; j <= n; j++) {
+				if (bus[i][k] + bus[k][j] < bus[i][j] && i != j) {
+					bus[i][j] = bus[i][k] + bus[k][j];
+				}
+			}
+		}
+	}
+
+	// 행렬 그대로 출력. INF인 지점은 0으로 출력
+	for (int i = 1; i <= n; i++) {
+		for (int j = 1; j <= n; j++) {
+			if (bus[i][j] == INF || i == j) {
+				cout << 0 << " ";
+			}
+			else {
+				cout << bus[i][j] << " ";
+			}
+		}
+		cout << "\n";
+	}
+}
