@@ -1,0 +1,65 @@
+#include<iostream>
+using namespace std;
+
+int INF = 1000000000;
+int d[110][110];
+void floydWarshall(int n);
+
+int main() {
+	cin.tie(NULL);
+	ios::sync_with_stdio(false);
+
+	// 물건의 개수와 미리 측정된 물건 쌍의 개수를 받음
+	int n, m;
+	cin >> n >> m;
+
+	// d배열을 초기화
+	for (int i = 1; i <= n; i++) {
+		for (int j = 1; j <= n; j++) {
+			d[i][j] = INF;
+		}
+	}
+
+	// 물건 쌍의 개수를 받고 d배열을 갱신
+	int a, b;
+	for (int i = 0; i < m; i++) {
+		cin >> a >> b;
+		d[a][b] = 1;
+		d[b][a] = INF + 1;
+	}
+
+	// d배열에 대해 플로이드-와샬 알고리즘을 수행. 출력까지 한번에
+	floydWarshall(n);
+	return 0;
+}
+
+void floydWarshall(int n) {
+	for (int k = 1; k <= n; k++) {
+		for (int i = 1; i <= n; i++) {
+			for (int j = 1; j <= n; j++) {
+				if (d[i][k] + d[k][j] < d[i][j]) {
+					d[i][j] = d[i][k] + d[k][j];
+				}
+			}
+		}
+	}
+
+	for (int i = 1; i <= n; i++) {
+		for (int j = 1; j <= n; j++) {
+			if (d[i][j] != INF) {
+				d[j][i] = INF + 1;
+			}
+		}
+	}
+
+	// 각 행에 대하여 INF값으로 있는 칸의 개수를 출력
+	for (int i = 1; i <= n; i++) {
+		int num = 0;
+		for (int j = 1; j <= n; j++) {
+			if (d[i][j] == INF && i != j) {
+				num++;
+			}
+		}
+		cout << num << "\n";
+	}
+}
