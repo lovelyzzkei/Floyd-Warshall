@@ -1,0 +1,85 @@
+#include<iostream>
+#include<vector>
+#include<cmath>
+using namespace std;
+
+int INF = 100000000;
+int d[110][110];
+
+void floydWarshall(int n);
+void find(int start, int n);
+
+int main() {
+	cin.tie(NULL);
+	ios::sync_with_stdio(false);
+
+	// 테스트 케이스의 수를 받음
+	int t;
+	cin >> t;
+	for (int p = 0; p < t; p++) {
+		int n;
+		cin >> n;
+		// 집의 좌표를 받음
+		int houseX, houseY;
+		cin >> houseX >> houseY;
+
+		// d배열의 대각선 부분을 INF로 초기화
+		for (int i = 1; i <= n; i++) {
+			d[i][i] = 0;
+		}
+
+		// 편의점과 축제 장소의 좌표를 받음. 처음 편의점에 2번을 부여하여 거리 저장
+		int a, b;
+		vector<pair<int, int> >coor(110);
+		for (int i = 0; i < n + 1; i++) {
+			cin >> a >> b;
+			// 편의점들의 좌표를 pair 벡터에 저장
+			coor[i + 2] = (make_pair(a, b));
+			// 거리는 양수이기 때문에 절댓값으로 저장
+			d[1][i + 2] = abs(a - houseX) + abs(b - houseY);
+			d[i + 2][1] = abs(a - houseX) + abs(b - houseY);
+		}
+
+		// 벡터 안에 있는 값들로 편의점들 사이의 거리를 구하여 d배열을 마저 초기화
+		for (int i = 2; i <= n + 2; i++) {
+			for (int j = i + 1; j <= n + 2; j++) {
+				d[i][j] = abs(coor[i].first - coor[j].first) + abs(coor[i].second - coor[j].second);
+				d[j][i] = abs(coor[i].first - coor[j].first) + abs(coor[i].second - coor[j].second);
+			}
+		}
+
+		// 거리의 값들로 초기화 된 d배열에 대하여 플로이드 와샬 알고리즘을 수행
+		floydWarshall(n + 2);
+	}
+	return 0;
+}
+
+void floydWarshall(int n) {
+	for (int i = 1; i <= n; i++) {
+		for (int j = 1; j <= n; j++) {
+			if (d[i][j] <= 1000) {
+				d[i][j] = 1;
+			}
+			else {
+				d[i][j] = INF;
+			}
+		}
+	}
+	// 거쳐가는 경로의 최단 거리를 구함
+	for (int k = 1; k <= n; k++) {
+		for (int i = 1; i <= n; i++) {
+			for (int j = 1; j <= n; j++) {
+				if (d[i][k] + d[k][j] < d[i][j]) {
+					d[i][j] = d[i][k] + d[k][j];
+				}
+			}
+		}
+	}
+	if (d[1][n] < INF) {
+		cout << "happy\n";
+	}
+	else if (d[1][n] >=INF){
+		cout << "sad\n";
+	}
+	return;
+}
