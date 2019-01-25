@@ -1,0 +1,62 @@
+#include<iostream>
+using namespace std;
+
+int INF = 100000000;
+long long int d[410][410];
+
+void floydWarshall(int n);
+
+int main() {
+	cin.tie(NULL);
+	ios::sync_with_stdio(false);
+
+	int n, m;
+	cin >> n >> m;
+
+	// d배열 초기화
+	for (int i = 1; i <= n; i++) {
+		for (int j = 1; j <= n; j++) {
+			d[i][j] = INF;
+		}
+	}
+
+	// 사건 전후 관계를 받음
+	int a, b;
+	for (int i = 0; i < m; i++) {
+		cin >> a >> b;
+		d[a][b] = -1;
+		d[b][a] = 1;
+	}
+
+	// 플로이드 와샬 알고리즘 실행
+	floydWarshall(n);
+
+	// 알고 싶은 사건 관계의 수와 그 쌍을 받고 d배열 내의 수를 확인하여 INF이면  0, INF보다 크면 1, 작으면 -1을 출력한다
+	int s;
+	cin >> s;
+	for (int i = 0; i < s; i++) {
+		cin >> a >> b;
+		if (d[a][b] == INF) {
+			cout << "0\n";
+		}
+		else {
+			cout << d[a][b] << "\n";
+		}
+	}
+	return 0;
+}
+
+void floydWarshall(int n) {
+	for (int k = 1; k <= n; k++) {
+		for (int i = 1; i <= n; i++) {
+			for (int j = 1; j <= n; j++) {
+				if (d[i][k] == 1 && d[k][j] == 1) {
+					d[i][j] = 1;
+				}
+				else if (d[i][k] == -1 && d[k][j] == -1) {
+					d[i][j] = -1;
+				}
+			}
+		}
+	}
+}
