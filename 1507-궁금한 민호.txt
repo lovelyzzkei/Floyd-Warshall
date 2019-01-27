@@ -1,0 +1,66 @@
+#include<iostream>
+using namespace std;
+
+int n;		// 도시의 개수
+int minimum[25][25];
+int cities[25][25];	// 원래의 도로 정보를 담기 위한 배열
+void backFloydWarshall();
+
+int main() {
+	cin.tie(NULL);
+	ios::sync_with_stdio(false);
+
+	int minimumTime;
+	cin >> n;
+	for (int i = 1; i <= n; i++) {
+		for (int j = 1; j <= n; j++) {
+			cin >> minimumTime;
+			minimum[i][j] = minimumTime;
+			cities[i][j] = minimumTime;
+		}
+	}
+	backFloydWarshall();
+	return 0;
+}
+
+void backFloydWarshall() {
+	for (int k = 1; k <= n; k++) {
+		for (int i = 1; i <= n; i++) {
+			for (int j = 1; j <= n; j++) {
+				if (minimum[i][k] + minimum[k][j] < minimum[i][j]) {
+					cout << "-1\n";
+					return;
+				}
+				if (minimum[i][k] + minimum[k][j] == minimum[i][j] && (i != k && j != k)) {
+					if (cities[i][k] == 0 && cities[k][j] == 0) {
+						cities[i][j] = 0;
+					}
+					else if (cities[i][k] == 0) {
+						cities[k][j] = minimum[k][j];
+						cities[i][j] = 0;
+					}
+					else if (cities[k][j] == 0) {
+						cities[i][k] = minimum[i][k];
+						cities[i][j] = 0;
+					}
+					else if (cities[i][k] != 0 && cities[k][j] != 0) {
+						cities[i][k] = minimum[i][k];
+						cities[k][j] = minimum[k][j];
+						cities[i][j] = 0;
+					}
+				}
+			}
+		}
+	}
+
+	int sum = 0;
+	for (int i = 1; i <= n; i++) {
+		for (int j = 1; j <= n; j++) {
+			if (cities[i][j] != 0) {
+				sum += cities[i][j];
+			}
+		}
+	}
+	cout << sum / 2 << "\n";
+	return; 
+}
